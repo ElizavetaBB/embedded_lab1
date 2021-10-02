@@ -90,16 +90,16 @@ int main(void)
   uint32_t longPressTime = 5000; // 5 сек
   uint32_t stopTime = 15000; // 15 сек
 
-  uint32_t playShortTime = 500;// 0,5 сек
+  uint32_t playShortTime = 500;// время проигрывания -  0,5 сек
   uint32_t playLongTime = playShortTime * 2;
 
-  bool state = false;
+  bool state = false; // состояние кнопки
 
-  resetButton();
-  uint32_t startTime = HAL_GetTick();
-  uint32_t pressTime = 0;
-  uint32_t timeWithoutPress = 0;
-  bool lights[100];
+  resetButton(); // сброс состояния кнопки в 0
+  uint32_t startTime = HAL_GetTick(); // текущее время выполнения
+  uint32_t pressTime = 0; // время нажатия
+  uint32_t timeWithoutPress = 0; // время без нажатия
+  bool lights[100]; // сохранение последовательности нажатий, 0 - короткое, 1 - длинное
   int i = 0;
   /* USER CODE END 2 */
 
@@ -109,13 +109,14 @@ int main(void)
   {
     /* USER CODE END WHILE */
 	  state = getButtonState();
-	  if (state){
-		 if (pressTime == 0) startTime = HAL_GetTick();
-		 pressTime = getButtonTime(startTime);
+	  if (state){// если нажата
+		 if (pressTime == 0) startTime = HAL_GetTick(); // вводится новое в случае долгого ненажатия кнопки
+		 pressTime = getButtonTime(startTime);// getButton определяет время, прошедшее от startTime
+		 // на протяжении всего нажатия startTime не меняется
 	  } else {
 		  if (pressTime >= longPressTime){
 			  playLongRed(playLongTime);
-			  startTime = HAL_GetTick();
+			  startTime = HAL_GetTick(); // устанавливается новое относительное время
 			  lights[i] = 1;
 			  i++;
 		  } else if (pressTime >= shortPressTime) {
@@ -124,14 +125,14 @@ int main(void)
 			  lights[i] = 0;
 			  i++;
 		  } else if (pressTime == 0) {
-			  timeWithoutPress = getButtonTime(startTime);
+			  timeWithoutPress = getButtonTime(startTime); // при ненажатии startTime не обновляется
 			  if (timeWithoutPress >= stopTime){
 				  playMorze(lights, i, playShortTime);
 				  timeWithoutPress = 0;
 				  i = 0;
 			  }
-		  } else startTime = HAL_GetTick();
-		 pressTime = 0;
+		  } else startTime = HAL_GetTick(); // при нажатии < shortPressTime устанавливается новое время
+		 pressTime = 0;// т.к. действия обработки pressTime закончены, нужно обнулить
 	  }
     /* USER CODE BEGIN 3 */
   }
