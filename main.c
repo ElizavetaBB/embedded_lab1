@@ -115,7 +115,7 @@ int main(void)
 		 // на протяжении всего нажатия startTime не меняется
 	  } else {
 		  if (pressTime >= longPressTime){
-			  playLongRed(playLongTime);
+			  playLongRed(playShortTime);
 			  startTime = HAL_GetTick(); // устанавливается новое относительное время
 			  lights[i] = 1;
 			  i++;
