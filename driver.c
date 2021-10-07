@@ -6,10 +6,12 @@
  */
 
 #include "driver.h"
+#include <stdbool.h>
+#include "stm32f4xx_hal.h"
 
 bool getButtonState(){
-	if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_15) == GPIO_PIN_SET) return 1;
-	else return 0;
+	if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_15) == GPIO_PIN_SET) return 0;
+	else return 1;
 }
 
 void resetButton(){
@@ -35,7 +37,6 @@ void playOutputSignal(uint32_t time, uint16_t GPIO_Pin){
 	HAL_GPIO_WritePin(GPIOD, GPIO_Pin, GPIO_PIN_SET);
 	delay(time);
 	HAL_GPIO_WritePin(GPIOD, GPIO_Pin, GPIO_PIN_RESET);
-
 }
 
 void playShortYellow(uint32_t time){
@@ -55,6 +56,7 @@ void playMorze(bool *chain, int n, uint32_t time){
 	for (i = 0; i < n; i++){
 		if (chain[i]) playGreen(time*2);
 		else playGreen(time);
+		delay(time);
 	}
 }
 

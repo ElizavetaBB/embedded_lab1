@@ -18,12 +18,15 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
-#include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdint.h>
+#include <stdbool.h>
+#include "main.h"
+#include "gpio.h"
 #include "driver.h"
+#include "stm32f4xx_hal.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -86,12 +89,11 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  uint32_t shortPressTime = 1000; // 1 сек
-  uint32_t longPressTime = 5000; // 5 сек
-  uint32_t stopTime = 15000; // 15 сек
+  uint32_t shortPressTime = 500; // 1 сек
+  uint32_t longPressTime = 2000; // 2 сек
+  uint32_t stopTime = 10000; // 10 сек
 
   uint32_t playShortTime = 500;// время проигрывания -  0,5 сек
-  uint32_t playLongTime = playShortTime * 2;
 
   bool state = false; // состояние кнопки
 
@@ -107,33 +109,33 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
 	  state = getButtonState();
-	  if (state){// если нажата
-		 if (pressTime == 0) startTime = HAL_GetTick(); // вводится новое в случае долгого ненажатия кнопки
-		 pressTime = getButtonTime(startTime);// getButton определяет время, прошедшее от startTime
-		 // на протяжении всего нажатия startTime не меняется
-	  } else {
-		  if (pressTime >= longPressTime){
-			  playLongRed(playShortTime);
-			  startTime = HAL_GetTick(); // устанавливается новое относительное время
-			  lights[i] = 1;
-			  i++;
-		  } else if (pressTime >= shortPressTime) {
-			  playShortYellow(playShortTime);
-			  startTime = HAL_GetTick();
-			  lights[i] = 0;
-			  i++;
-		  } else if (pressTime == 0) {
-			  timeWithoutPress = getButtonTime(startTime); // при ненажатии startTime не обновляется
-			  if (timeWithoutPress >= stopTime){
-				  playMorze(lights, i, playShortTime);
-				  timeWithoutPress = 0;
-				  i = 0;
-			  }
-		  } else startTime = HAL_GetTick(); // при нажатии < shortPressTime устанавливается новое время
-		 pressTime = 0;// т.к. действия обработки pressTime закончены, нужно обнулить
-	  }
+	  	  if (state){// если нажата
+	  		 if (pressTime == 0) startTime = HAL_GetTick(); // вводится новое в случае долгого ненажатия кнопки
+	  		 pressTime = getButtonTime(startTime);// getButton определяет время, прошедшее от startTime
+	  		 // на протяжении всего нажатия startTime не меняется
+	  	  } else {
+	  		  if (pressTime >= longPressTime){
+	  			  playLongRed(playShortTime);
+	  			  startTime = HAL_GetTick(); // устанавливается новое относительное время
+	  			  lights[i] = 1;
+	  			  i++;
+	  		  } else if (pressTime >= shortPressTime) {
+	  			  playShortYellow(playShortTime);
+	  			  startTime = HAL_GetTick();
+	  			  lights[i] = 0;
+	  			  i++;
+	  		  } else if (pressTime == 0) {
+	  			  timeWithoutPress = getButtonTime(startTime); // при ненажатии startTime не обновляется
+	  			  if (timeWithoutPress >= stopTime){
+	  				  playMorze(lights, i, playShortTime);
+	  				  timeWithoutPress = 0;
+	  				  i = 0;
+	  			  }
+	  		  } else startTime = HAL_GetTick(); // при нажатии < shortPressTime устанавливается новое время
+	  		 pressTime = 0;// т.к. действия обработки pressTime закончены, нужно обнулить
+	  	  }
+    /* USER CODE END WHILE */
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
